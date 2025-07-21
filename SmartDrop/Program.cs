@@ -4,28 +4,28 @@
     {
         static void Main(string[] args)
         {
-            var vehicle = new DeliveryPilotVehicleDTOView
-            {
-                DeliveryPilotVehicleID = Guid.NewGuid(),
-                MaxDropCount = 3,
-                MaxWeight = 100.0
-            };
+            var vehicles = new List<DeliveryPilotVehicleDTOView>
+{
+    new DeliveryPilotVehicleDTOView { DeliveryPilotVehicleID = Guid.NewGuid(), MaxDropCount = 2, MaxWeight = 50, CurrentLat = 30.0, CurrentLng = 31.0 },
+    new DeliveryPilotVehicleDTOView { DeliveryPilotVehicleID = Guid.NewGuid(), MaxDropCount = 3, MaxWeight = 100, CurrentLat = 30.5, CurrentLng = 31.5 }
+};
 
             var drops = new List<DropShipping>
-        {
-            new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 30, IsFastWay = true, DropLocationLatitude = 30.0, DropLocationLongitude = 31.0 },
-            new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 50, IsFastWay = false, DropLocationLatitude = 30.2, DropLocationLongitude = 31.2 },
-            new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 40, IsFastWay = true, DropLocationLatitude = 30.4, DropLocationLongitude = 31.4 },
-            new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 90, IsFastWay = false, DropLocationLatitude = 30.5, DropLocationLongitude = 31.5 }
-        };
+{
+    new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 20, IsFastWay = true, DropLocationLatitude = 30.1, DropLocationLongitude = 31.1 },
+    new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 30, IsFastWay = false, DropLocationLatitude = 30.2, DropLocationLongitude = 31.2 },
+    new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 25, IsFastWay = true, DropLocationLatitude = 30.6, DropLocationLongitude = 31.6 },
+    new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 40, IsFastWay = false, DropLocationLatitude = 30.7, DropLocationLongitude = 31.7 },
+    new DropShipping { DropShippingID = Guid.NewGuid(), Weight = 10, IsFastWay = true, DropLocationLatitude = 30.8, DropLocationLongitude = 31.8 }
+};
 
-            var route = RouteDropAndVehicle.dropShippings(drops, vehicle, 30.0, 31.0);
+            var assigned = RouteDropAndVehicle.dropShippings(drops, vehicles);
 
-            Console.WriteLine("DROPS");
-            foreach (var drop in route)
+            foreach (var drop in assigned)
             {
-                Console.WriteLine($" DROP ID {drop.DropShippingID}, Weight: {drop.Weight}, IsFastWay: {drop.IsFastWay}");
+                Console.WriteLine($"Drop ID: {drop.DropShippingID}  Vehicle: {(drop.DeliveryPilotVehicle.HasValue ? drop.DeliveryPilotVehicle.ToString() : "")}");
             }
+
         }
     }
 }

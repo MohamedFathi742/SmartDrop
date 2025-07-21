@@ -11,5 +11,6 @@ public class DeliveryPilotVehicleDTOView
     public int MaxDropCount { get; set; } = 10;   
     public double MaxWeight { get; set; } = 200.0;
 
-
+    public double CurrentLat { get; set; } 
+    public double CurrentLng { get; set; }
 }

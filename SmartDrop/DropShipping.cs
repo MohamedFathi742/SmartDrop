@@ -15,6 +15,6 @@ public class DropShipping
     public double DestinationLocationLatitude { get; set; }
     public double DestinationLocationLongitude { get; set; }
 
-
+    public Guid? DeliveryPilotVehicle { get; set; }
 
 }
