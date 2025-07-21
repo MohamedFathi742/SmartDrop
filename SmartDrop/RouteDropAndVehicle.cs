@@ -7,41 +7,38 @@ using System.Threading.Tasks;
 namespace SmartDrop;
 public static class RouteDropAndVehicle
 {
-    public static List<DropShipping> dropShippings(
-        List<DropShipping> drops,
-        List<DeliveryPilotVehicleDTOView> vehicles)
+    public static List<DropShipping> DropShippings(
+         List<DropShipping> drops,
+         DeliveryPilotVehicleDTOView vehicle,
+         double currentLat,
+         double currentLng
+     )
     {
-      
-        var sortedDrops = drops
+        var result = new List<DropShipping>();
+        double totalWeight = 0;
+
+        var filter = drops
+            .Where(d =>
+                d.Length <= vehicle.MaxLength &&
+                d.Width <= vehicle.MaxWidth &&
+                d.Height <= vehicle.MaxHeight
+            )
             .OrderByDescending(d => d.IsFastWay)
+            .ThenBy(d => Distance(currentLat, currentLng, d.DropLocationLatitude, d.DropLocationLongitude))
             .ToList();
 
-        foreach (var vehicle in vehicles)
+        foreach (var item in filter)
         {
-            double totalWeight = 0;
-            int assignedCount = 0;
+            if (result.Count >= vehicle.MaxDropCount) break;
 
-          
-            var availableDrops = sortedDrops
-                .Where(d => d.DeliveryPilotVehicle == null)
-                .OrderBy(d => Distance(vehicle.CurrentLat, vehicle.CurrentLng, d.DropLocationLatitude, d.DropLocationLongitude))
-                .ToList();
-
-            foreach (var drop in availableDrops)
+            if (totalWeight + item.Weight <= vehicle.MaxWeight)
             {
-                if (assignedCount >= vehicle.MaxDropCount)
-                    break;
-
-                if (totalWeight + drop.Weight <= vehicle.MaxWeight)
-                {
-                    drop.DeliveryPilotVehicle = vehicle.DeliveryPilotVehicleID;
-                    totalWeight += drop.Weight;
-                    assignedCount++;
-                }
+                result.Add(item);
+                totalWeight += item.Weight;
             }
         }
 
-        return drops;
+        return result;
     }
 
     private static double Distance(double lat1, double lon1, double lat2, double lon2)
